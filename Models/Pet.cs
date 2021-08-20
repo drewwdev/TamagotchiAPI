@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace TamagotchiAPI.Models
 {
@@ -9,5 +10,6 @@ namespace TamagotchiAPI.Models
         public DateTime Birthday { get; set; }
         public int HungerLevel { get; set; }
         public int HappinessLevel { get; set; }
+
     }
 }

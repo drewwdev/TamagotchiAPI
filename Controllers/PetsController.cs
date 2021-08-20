@@ -124,6 +124,11 @@ namespace TamagotchiAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Pet>> PostPet(Pet pet)
         {
+            // Default values for a new pet
+            pet.Birthday = DateTime.Now;
+            pet.HungerLevel = 0;
+            pet.HappinessLevel = 0;
+
             // Indicate to the database context we want to add this new record
             _context.Pets.Add(pet);
             await _context.SaveChangesAsync();
@@ -165,5 +170,111 @@ namespace TamagotchiAPI.Controllers
         {
             return _context.Pets.Any(pet => pet.Id == id);
         }
+
+        // Adding Feedings to a pet
+        // POST /api/Pets/5/Feedings
+        [HttpPost("{id}/Feedings")]
+        public async Task<ActionResult<Feeding>> CreateFeedingForPet(int id)
+        {
+            var feeding = new Feeding();
+
+            // First, let's find the pet (by using the ID)
+            var pet = await _context.Pets.FindAsync(id);
+
+            // If the pet doesn't exist: return a 404 Not found.
+            if (pet == null)
+            {
+                // Return a `404` response to the client indicating we could not find a pet with this id
+                return NotFound();
+            }
+
+            // Subtract 5 from hungerLevel when fed
+            pet.HungerLevel -= 5;
+
+            // Add 3 to happinessLevel when fed
+            pet.HappinessLevel += 3;
+
+            // Add a new Datetime to when a pet was fed
+            feeding.When = DateTime.Now;
+
+            // Associate the feeding to the given pet.
+            feeding.PetID = pet.Id;
+            // Add the feeding to the database
+            _context.Feedings.Add(feeding);
+            await _context.SaveChangesAsync();
+
+            // Return the new feeding to the response of the API
+            return Ok(feeding);
+        }
+
+        // Adding Playtime to a pet
+        // POST /api/Pets/5/Playtimes
+        [HttpPost("{id}/Playtimes")]
+        public async Task<ActionResult<Playtime>> CreatePlaytimeForPet(int id)
+        {
+            var playtime = new Playtime();
+
+            // First, let's find the pet (by using the ID)
+            var pet = await _context.Pets.FindAsync(id);
+
+            // If the pet doesn't exist: return a 404 Not found.
+            if (pet == null)
+            {
+                // Return a `404` response to the client indicating we could not find a pet with this id
+                return NotFound();
+            }
+
+            // Add 5 to HappinessLevel each time a pet has a new playtime
+            pet.HappinessLevel += 5;
+
+            // Add 3 to HungerLevel each time a pet has a new playtime
+            pet.HungerLevel += 3;
+
+            // Add a new Datetime to when a pet was played with
+            playtime.When = DateTime.Now;
+
+            // Associate the playtime to the given pet.
+            playtime.PetId = pet.Id;
+
+            // Add the playtime to the database
+            _context.Playtimes.Add(playtime);
+            await _context.SaveChangesAsync();
+
+            // Return the new playtime to the response of the API
+            return Ok(playtime);
+        }
+        // Adding Scolding to a pet
+        // POST /api/Pets/5/Scoldings
+        [HttpPost("{id}/Scoldings")]
+        public async Task<ActionResult<Scolding>> CreateScoldingForPet(int id)
+        {
+            var scolding = new Scolding();
+
+            // First, let's find the pet (by using the ID)
+            var pet = await _context.Pets.FindAsync(id);
+
+            // If the pet doesn't exist: return a 404 Not found.
+            if (pet == null)
+            {
+                // Return a `404` response to the client indicating we could not find a pet with this id
+                return NotFound();
+            }
+
+            // Subtract 5 from happiness level when scolded 
+            pet.HappinessLevel -= 5;
+
+            // Add a new datetime to when a pet was scolded
+            scolding.When = DateTime.Now;
+
+            // Associate the scolding to the given pet.
+            scolding.PetID = pet.Id;
+
+            // Add the scolding to the database
+            _context.Scoldings.Add(scolding);
+            await _context.SaveChangesAsync();
+            // Return the new scolding to the response of the API
+            return Ok(scolding);
+        }
+
     }
 }
