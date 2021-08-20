@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TamagotchiAPI.Models;
@@ -9,9 +10,10 @@ using TamagotchiAPI.Models;
 namespace TamagotchiAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210820140512_AddFeedings")]
+    partial class AddFeedings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,69 +65,7 @@ namespace TamagotchiAPI.Migrations
                     b.ToTable("Pets");
                 });
 
-            modelBuilder.Entity("TamagotchiAPI.Models.Playtime", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<int>("PetId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("When")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PetId");
-
-                    b.ToTable("Playtimes");
-                });
-
-            modelBuilder.Entity("TamagotchiAPI.Models.Scolding", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<int>("PetID")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("When")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PetID");
-
-                    b.ToTable("Scoldings");
-                });
-
             modelBuilder.Entity("TamagotchiAPI.Models.Feeding", b =>
-                {
-                    b.HasOne("TamagotchiAPI.Models.Pet", "Pet")
-                        .WithMany()
-                        .HasForeignKey("PetID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pet");
-                });
-
-            modelBuilder.Entity("TamagotchiAPI.Models.Playtime", b =>
-                {
-                    b.HasOne("TamagotchiAPI.Models.Pet", "Pet")
-                        .WithMany()
-                        .HasForeignKey("PetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pet");
-                });
-
-            modelBuilder.Entity("TamagotchiAPI.Models.Scolding", b =>
                 {
                     b.HasOne("TamagotchiAPI.Models.Pet", "Pet")
                         .WithMany()
