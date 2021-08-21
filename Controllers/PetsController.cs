@@ -128,6 +128,7 @@ namespace TamagotchiAPI.Controllers
             pet.Birthday = DateTime.Now;
             pet.HungerLevel = 0;
             pet.HappinessLevel = 0;
+            pet.LastInteractedWithDate = DateTime.Now;
 
             // Indicate to the database context we want to add this new record
             _context.Pets.Add(pet);
@@ -187,24 +188,33 @@ namespace TamagotchiAPI.Controllers
                 // Return a `404` response to the client indicating we could not find a pet with this id
                 return NotFound();
             }
+            else if (pet.IsDead)
+            {
+                return Ok("This pet is dead!");
+            }
+            else
+            {
+                // Subtract 5 from hungerLevel when fed
+                pet.HungerLevel -= 5;
 
-            // Subtract 5 from hungerLevel when fed
-            pet.HungerLevel -= 5;
+                // Add 3 to happinessLevel when fed
+                pet.HappinessLevel += 3;
 
-            // Add 3 to happinessLevel when fed
-            pet.HappinessLevel += 3;
+                // Add a new Datetime to when a pet was fed
+                feeding.When = DateTime.Now;
 
-            // Add a new Datetime to when a pet was fed
-            feeding.When = DateTime.Now;
+                // Add a new Datetime to when a pet was interacted with
+                pet.LastInteractedWithDate = DateTime.Now;
 
-            // Associate the feeding to the given pet.
-            feeding.PetID = pet.Id;
-            // Add the feeding to the database
-            _context.Feedings.Add(feeding);
-            await _context.SaveChangesAsync();
+                // Associate the feeding to the given pet.
+                feeding.PetID = pet.Id;
+                // Add the feeding to the database
+                _context.Feedings.Add(feeding);
+                await _context.SaveChangesAsync();
 
-            // Return the new feeding to the response of the API
-            return Ok(feeding);
+                // Return the new feeding to the response of the API
+                return Ok(feeding);
+            }
         }
 
         // Adding Playtime to a pet
@@ -223,25 +233,34 @@ namespace TamagotchiAPI.Controllers
                 // Return a `404` response to the client indicating we could not find a pet with this id
                 return NotFound();
             }
+            else if (pet.IsDead)
+            {
+                return Ok("This pet is dead!");
+            }
+            else
+            {
+                // Add 5 to HappinessLevel each time a pet has a new playtime
+                pet.HappinessLevel += 5;
 
-            // Add 5 to HappinessLevel each time a pet has a new playtime
-            pet.HappinessLevel += 5;
+                // Add 3 to HungerLevel each time a pet has a new playtime
+                pet.HungerLevel += 3;
 
-            // Add 3 to HungerLevel each time a pet has a new playtime
-            pet.HungerLevel += 3;
+                // Add a new Datetime to when a pet was played with
+                playtime.When = DateTime.Now;
 
-            // Add a new Datetime to when a pet was played with
-            playtime.When = DateTime.Now;
+                // Associate the playtime to the given pet.
+                playtime.PetId = pet.Id;
 
-            // Associate the playtime to the given pet.
-            playtime.PetId = pet.Id;
+                // Add a new Datetime to when a pet was interacted with
+                pet.LastInteractedWithDate = DateTime.Now;
 
-            // Add the playtime to the database
-            _context.Playtimes.Add(playtime);
-            await _context.SaveChangesAsync();
+                // Add the playtime to the database
+                _context.Playtimes.Add(playtime);
+                await _context.SaveChangesAsync();
 
-            // Return the new playtime to the response of the API
-            return Ok(playtime);
+                // Return the new playtime to the response of the API
+                return Ok(playtime);
+            }
         }
         // Adding Scolding to a pet
         // POST /api/Pets/5/Scoldings
@@ -259,21 +278,30 @@ namespace TamagotchiAPI.Controllers
                 // Return a `404` response to the client indicating we could not find a pet with this id
                 return NotFound();
             }
+            else if (pet.IsDead)
+            {
+                return Ok("This pet is dead!");
+            }
+            else
+            {
+                // Subtract 5 from happiness level when scolded 
+                pet.HappinessLevel -= 5;
 
-            // Subtract 5 from happiness level when scolded 
-            pet.HappinessLevel -= 5;
+                // Add a new datetime to when a pet was scolded
+                scolding.When = DateTime.Now;
 
-            // Add a new datetime to when a pet was scolded
-            scolding.When = DateTime.Now;
+                // Associate the scolding to the given pet.
+                scolding.PetID = pet.Id;
 
-            // Associate the scolding to the given pet.
-            scolding.PetID = pet.Id;
+                // Add a new Datetime to when a pet was interacted with
+                pet.LastInteractedWithDate = DateTime.Now;
 
-            // Add the scolding to the database
-            _context.Scoldings.Add(scolding);
-            await _context.SaveChangesAsync();
-            // Return the new scolding to the response of the API
-            return Ok(scolding);
+                // Add the scolding to the database
+                _context.Scoldings.Add(scolding);
+                await _context.SaveChangesAsync();
+                // Return the new scolding to the response of the API
+                return Ok(scolding);
+            }
         }
 
     }
